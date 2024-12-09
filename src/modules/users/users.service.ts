@@ -67,4 +67,10 @@ export class UsersService {
   remove(id: string) {
     return this.userModel.findByIdAndDelete({ _id: id });
   }
+
+  //  SEARCH BBY EMAIL
+
+  async findByEmail(email: string) {
+    return await this.userModel.findOne({ email });
+  }
 }
