@@ -14,6 +14,7 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import aqp from 'api-query-params';
+import { Public } from '@/decorator/customizePublic';
 
 @Controller('users')
 export class UsersController {
@@ -25,6 +26,7 @@ export class UsersController {
   }
 
   @Get()
+  @Public()
   findAll(@Query() query) {
     const querys = aqp(query);
 
