@@ -10,14 +10,21 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async signIn(username: string, pass: string): Promise<any> {
+  // thư viện tự biết mà chạy tới cái này để đăng nhập sau đó trả về user cho guard
+
+  async validateUser(username: string, pass: string): Promise<any> {
     const user = await this.usersService.findByEmail(username);
     const checkPass = await comparePassword(pass, user.password);
-    if (checkPass) {
-      const payload = { sub: user._id, username: user.email };
-      return {
-        access_token: await this.jwtService.signAsync(payload),
-      };
-    }
+
+    if (!user || !checkPass) return null;
+    return user;
+  }
+
+  // sau đó dùng hàm này để in ra
+  async login(user: any) {
+    const payload = { username: user.email, sub: user._id };
+    return {
+      access_token: this.jwtService.sign(payload),
+    };
   }
 }
