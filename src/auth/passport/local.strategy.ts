@@ -19,6 +19,9 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     if (!user) {
       throw new UnauthorizedException('User or Password khong hop le ');
     }
+    if (user.isActive === false) {
+      throw new UnauthorizedException('Tài khoản chưa được kích hoạt ');
+    }
     return user;
   }
 }

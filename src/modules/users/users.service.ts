@@ -8,9 +8,13 @@ import { hashPassword } from '@/helpers/utils';
 import { CreateAuthDto } from '@/auth/dto/create-auth.dto';
 import { v4 as uuidv4 } from 'uuid';
 import dayjs from 'dayjs';
+import { MailerService } from '@nestjs-modules/mailer';
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+  constructor(
+    @InjectModel(User.name) private userModel: Model<User>,
+    private readonly mailerService: MailerService,
+  ) {}
 
   checkEmailExits = async (email: string) => {
     try {
@@ -85,14 +89,26 @@ export class UsersService {
         return 'Email da ton tai ';
       }
       const passHash = await hashPassword(registerDto.password);
-
+      const codeId = uuidv4();
       const user = await this.userModel.create({
         ...registerDto,
         password: passHash,
         isActive: false,
-        codeExpired: dayjs().add(1, 'minutes'),
-        codeId: uuidv4(),
+        codeExpired: dayjs().add(5, 'minutes'),
+        codeId: codeId,
       });
+      this.mailerService
+        .sendMail({
+          to: user?.email, // list of receivers
+          subject: 'Activate your account at Website Of Thanh', // Subject line
+          template: 'register',
+          context: {
+            name: user?.name ?? user?.email,
+            activationCode: codeId,
+          },
+        })
+        .then(() => {})
+        .catch(() => {});
       return { id: user._id };
     } catch (error) {
       console.log(error);

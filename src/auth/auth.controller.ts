@@ -48,7 +48,11 @@ export class AuthController {
         to: 'thanhhihihihi2@gmail.com', // list of receivers
         subject: 'Testing Nest MailerModule ✔', // Subject line
         text: 'welcome', // plaintext body
-        html: '<b>Dẫu khó khăn nhưng bạn sẽ thành công , tôi tin vào điều đó </b>', // HTML body content
+        template: 'register',
+        context: {
+          name: 'Eric',
+          activationCode: '123456',
+        },
       })
       .then(() => {})
       .catch(() => {});

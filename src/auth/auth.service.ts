@@ -1,6 +1,10 @@
 import { comparePassword } from '@/helpers/utils';
 import { UsersService } from '@/modules/users/users.service';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { CreateAuthDto } from './dto/create-auth.dto';
 
@@ -15,9 +19,14 @@ export class AuthService {
 
   async validateUser(username: string, pass: string): Promise<any> {
     const user = await this.usersService.findByEmail(username);
+    if (!user) {
+      throw new UnauthorizedException("Can't found account");
+    }
     const checkPass = await comparePassword(pass, user.password);
 
-    if (!user || !checkPass) return null;
+    if (!checkPass) {
+      throw new UnauthorizedException('Email or Pass wrong ');
+    }
     return user;
   }
 
