@@ -6,7 +6,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { CreateAuthDto } from './dto/create-auth.dto';
+import { CodeAuthDto, CreateAuthDto } from './dto/create-auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -34,6 +34,7 @@ export class AuthService {
   async login(user: any) {
     const payload = { username: user.email, sub: user._id };
     return {
+      user: { email: user.email, _id: user._id, name: user.name },
       access_token: this.jwtService.sign(payload),
     };
   }
@@ -42,5 +43,14 @@ export class AuthService {
 
   handleRegister = async (registerDto: CreateAuthDto) => {
     return await this.usersService.handleRegister(registerDto);
+  };
+
+  handleCheckCode = async (codeAuthDto: CodeAuthDto) => {
+    return await this.usersService.handleActive(codeAuthDto);
+  };
+
+  retryActive = async (email: string) => {
+    console.log('email 3 ', email);
+    return await this.usersService.retryActive(email);
   };
 }

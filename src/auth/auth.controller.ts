@@ -10,12 +10,12 @@ import {
   Request,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CreateAuthDto } from './dto/create-auth.dto';
+import { CodeAuthDto, CreateAuthDto } from './dto/create-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { LocalAuthGuard } from './passport/local-auth.guard';
 import { JwtAuthGuard } from './passport/jwt-auth.guard';
-import { Public } from '@/decorator/customizePublic';
+import { Public, ResponseMessage } from '@/decorator/customizePublic';
 import { MailerService } from '@nestjs-modules/mailer';
 
 @Controller('auth')
@@ -28,6 +28,7 @@ export class AuthController {
   @Public()
   @Post('login')
   @UseGuards(LocalAuthGuard)
+  @ResponseMessage('Fetch Login ')
   async login(@Request() req) {
     return this.authService.login(req.user);
   }
@@ -40,6 +41,19 @@ export class AuthController {
     return await this.authService.handleRegister(registerDto);
   }
 
+  @Public()
+  @Post('check-code')
+  async checkCode(@Body() codeAuthDto: CodeAuthDto) {
+    return await this.authService.handleCheckCode(codeAuthDto);
+  }
+
+  @Public()
+  @Post('retry-active')
+  async retryActive(@Body('email') email: string) {
+    console.log('email 1 ', email);
+
+    return await this.authService.retryActive(email);
+  }
   @Public()
   @Get('mail')
   async testMail() {

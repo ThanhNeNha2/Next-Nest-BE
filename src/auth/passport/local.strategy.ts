@@ -4,6 +4,7 @@ import {
   Injectable,
   UnauthorizedException,
   Dependencies,
+  BadRequestException,
 } from '@nestjs/common';
 import { AuthService } from '../auth.service';
 
@@ -20,7 +21,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
       throw new UnauthorizedException('User or Password khong hop le ');
     }
     if (user.isActive === false) {
-      throw new UnauthorizedException('Tài khoản chưa được kích hoạt ');
+      throw new BadRequestException('Tài khoản chưa được kích hoạt ');
     }
     return user;
   }

@@ -12,7 +12,13 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
-
+  //config cors
+  app.enableCors({
+    origin: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    preflightContinue: false,
+    credentials: true,
+  });
   const configService = app.get(ConfigService);
   app.setGlobalPrefix('api/v1');
   const port = configService.get('PORT');
